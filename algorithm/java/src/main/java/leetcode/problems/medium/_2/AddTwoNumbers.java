@@ -36,7 +36,7 @@ public class AddTwoNumbers {
         ListNode resultList = new ListNode();
         ListNode head = resultList;
 
-        while ((l1 != null) && (l2 != null)) {
+        while ((l1 != null) || (l2 != null)) {
             if (l1 != null) {
                 sum += l1.val;
                 l1 = l1.next;
