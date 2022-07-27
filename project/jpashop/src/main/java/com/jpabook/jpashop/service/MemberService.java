@@ -14,7 +14,8 @@ import java.util.List;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    //회원 가입
+    //회원 가
+    // 입
     @Transactional
     public Long join(Member member) {
         validateDuplicateMember(member);
