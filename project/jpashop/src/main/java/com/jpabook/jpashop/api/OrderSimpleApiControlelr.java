@@ -7,8 +7,8 @@ import com.jpabook.jpashop.repository.OrderRepository;
 import com.jpabook.jpashop.repository.OrderSearch;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * Order -> Member
  * Order -> Delivery
  */
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class OrderSimpleApiControlelr {
     private final OrderRepository orderRepository;
@@ -40,6 +40,14 @@ public class OrderSimpleApiControlelr {
         //ORDER 2개
         //N + 1 -> 1 + 회원 N + 배송 N
         return orderRepository.findAllByString(new OrderSearch())
+                .stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> orderV3() {
+        return orderRepository.findAllWithMemberDelivery()
                 .stream()
                 .map(SimpleOrderDto::new)
                 .collect(Collectors.toList());
