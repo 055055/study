@@ -1,23 +1,20 @@
 package com.jpabook.jpashop.api;
 
-import com.jpabook.jpashop.domain.Address;
 import com.jpabook.jpashop.domain.Order;
 import com.jpabook.jpashop.domain.OrderItem;
-import com.jpabook.jpashop.domain.OrderStatus;
 import com.jpabook.jpashop.repository.OrderRepository;
 import com.jpabook.jpashop.repository.OrderSearch;
 import com.jpabook.jpashop.repository.order.query.OrderFlatDto;
 import com.jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import com.jpabook.jpashop.repository.order.query.OrderQueryDto;
 import com.jpabook.jpashop.repository.order.query.OrderQueryRepository;
-import lombok.Getter;
+import com.jpabook.jpashop.service.query.OrderDto;
+import com.jpabook.jpashop.service.query.OrderQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.*;
@@ -49,12 +46,11 @@ public class OrderApiController {
                 .collect(toList());
     }
 
+    private final OrderQueryService orderQueryService;
+
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3() {
-        List<Order> orders = orderRepository.findAllWithItem();
-        return orders.stream()
-                .map(o -> new OrderDto(o))
-                .collect(toList());
+        return orderQueryService.ordersV3();
     }
 
     @GetMapping("/api/v3.1/orders")
@@ -86,44 +82,5 @@ public class OrderApiController {
                 .entrySet().stream()
                 .map(e -> new OrderQueryDto(e.getKey().getOrderId(), e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(), e.getValue()))
                 .collect(toList());
-    }
-
-    @Getter
-    static class OrderDto {
-
-        private Long orderId;
-        private String name;
-        private LocalDateTime orderDate;
-        private OrderStatus orderStatus;
-        private Address address;
-        private List<OrderItemDto> orderItems;
-
-        public OrderDto(Order order) {
-            orderId = order.getId();
-            name = order.getMember().getName();
-            orderDate = order.getOrderDate();
-            orderStatus = order.getStatus();
-            address = order.getDelivery().getAddress();
-            List<OrderItemDto> list = new ArrayList<>();
-            for (OrderItem orderItem : order.getOrderItems()) {
-                OrderItemDto orderItemDto = new OrderItemDto(orderItem);
-                list.add(orderItemDto);
-            }
-            orderItems = list;
-        }
-    }
-
-    @Getter
-    static class OrderItemDto {
-
-        private String itemName; //상품명
-        private int orderPrice; //주문 가격
-        private int count; //주문 수량
-
-        public OrderItemDto(OrderItem orderItem) {
-            itemName = orderItem.getItem().getName();
-            orderPrice = orderItem.getOrderPrice();
-            count = orderItem.getCount();
-        }
     }
 }
