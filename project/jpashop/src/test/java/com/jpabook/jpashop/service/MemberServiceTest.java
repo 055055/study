@@ -29,7 +29,7 @@ public class MemberServiceTest {
         Long savedId = memberService.join(member);
 
         //then
-        assertEquals(member, memberRepository.findOne(savedId));
+        assertEquals(member, memberRepository.findById(savedId).get());
         //커밋이 되지 않으면 영속성컨텍스트에서 flush 하지 않아서 실제 DB에는 없다.
     }
 
