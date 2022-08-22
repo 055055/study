@@ -95,3 +95,6 @@ ex) List<Complaint> litany = Collections.list(legacyLitany);
 ## 핵심 정리
 >정적 팩터리 메서드와 public 생성자는 각자의 쓰임새가 있으니 상대적인 장단점을 이해하고 사용하는 것이 좋다.  
 >그렇다고 하더라도 정적 팩터리를 사용하는 게 유리한 경우가 더 많으므로 무작정 public 생성자를 제공하던 습관이 있다면 고치자
+
+## 출처
+[이펙티브자바](https://search.shopping.naver.com/book/catalog/32436239326?cat_id=50010920&frm=PBOKMOD&query=%08%EC%9D%B4%ED%8E%99%ED%8B%B0%EB%B8%8C+%EC%9E%90%EB%B0%94&NaPm=ct%3Dl6z138ns%7Cci%3Db0f99d2f2a318dd7ab9dac8495e63c0076fddd86%7Ctr%3Dboknx%7Csn%3D95694%7Chk%3D71936725f1d33db581c3d8c6a56703ade1a7c790)
