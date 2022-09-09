@@ -26,6 +26,11 @@ Database 를 활용하여 레이스컨디션 해결해보기
 1. Optimistic Lock  
 lock 을 걸지않고 문제가 발생할 때 처리합니다.
 대표적으로 version column 을 만들어서 해결하는 방법이 있습니다.
+    - 장점
+      - 별도의 락을 잡지 않아서 pessimistic lock 보다 성능상 이점이 있다.
+    - 단점
+      - 업데이트가 실패했을 대 재시도 로직을 개발자가 직접해줘야 한다.  
+충돌이 빈번하게 일어날 것이라 본다면 pessimistic lock/ 빈번하지 않다면 optimistic lock을 사용하자
 
 2. Pessimistic Lock (exclusive lock)  
 다른 트랜잭션이 특정 row 의 lock 을 얻는것을 방지합니다.
