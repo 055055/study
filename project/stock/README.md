@@ -49,6 +49,13 @@ query의 for update 이부분이 락을 걸고 데이터를 가지고 오는 부
 이름과 함께 lock을 획득합니다. 즉 이름을 가진 메타데이터 락이다. 테이블말고 별도 공간에 락을 건다.  
 해당 lock 은 다른세션에서 획득 및 해제가 불가능하다.
 이름을 가진 락을 획득한 후 해제할 때 까지 다른 세션은 이 락을 획득 못한다.  
+>>모든 Lock이 해제를 하지 않는다면 데이터소스가 부족해지는 현상이 나타날 수 있다.  
+>>그래서 named lock은 데이터소스를 분리해야 한다. 커넥션을 2개를 사용하기 때문에 lock 획득에 필요한 Connection 1개, transaction(로직)에 필요한 커넥션 1개
+>>lock을 사용하는 DB와 일반 DB를 분리하는 것도 하나의 방법이다. 그러나 일반적으로 동일한 DB에서 2개의 커넥션 풀을 사용할 때는  
+>>A커넥션 풀은 lock 전용, B커넥션 풀은 로직 전용으로 사용하면 된다. 
+
+**실무에서는 lock사용 DB와 일반 DB를 분리하는 걸 추천한다. 또한 JPA native query를 사용해야 해서 jdbc를 사용하는게 나을 수 있다.(별도 데이터소스 구성)** 
+
 mysql 기준
    - getLock: 락 획득
    - releaseLock: 락 해제
@@ -68,6 +75,22 @@ pessimistic lock은 low나 table 단위로 건다. named lock은 meta data에 lo
 참고문헌
 https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_exclusive_lock
 https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html
-https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html
+https://dev.mysql.com/doc/refman/8.0/en/locking-functions.html  
 
+## Redis를 이용해보기
 
+### redis를 활용하여 동시성 문제 해결하는 대표적인 라이브러리
+
+- lettuce  
+lettuce는 setnx를 사용하여 락을 획득한다. setnx는 spin lock을 사용한다.
+    - setnx 명령어를 활용하여 분산락 구현
+    - spin lock 방식
+      - 락을 획득하려는 쓰레드가 락을 사용할 수 있는지 반복적으로 확인하며 락을 획득하는 방식
+- redisson
+    - pub-sub 기반으로 lock 구현 제공
+      - channel을 만들고 lock을 점유하고 있는 쓰레드가 락을 획득하려고 대기하는 쓰레드에게 해제를 알려주고 안내를 받은 쓰레드가 락을 획득하는 방식
+      - lettuce와 다르게 별도의 retry 방식을 작성하지 않아도 된다.
+
+docker image
+- docker pull redis
+- docker run —name redis-lock -d -p 6379:6379 redis
