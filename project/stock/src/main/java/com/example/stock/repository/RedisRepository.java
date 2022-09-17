@@ -13,13 +13,13 @@ public class RedisRepository {
         this.redisTemplate = redisTemplate;
     }
 
-    public Boolean lock(Long key){
+    public Boolean lock(Long key) {
         return redisTemplate
                 .opsForValue()
                 .setIfAbsent(generateKey(key), "lock", Duration.ofMillis(3_000));
     }
 
-    public Boolean unlock(Long key){
+    public Boolean unlock(Long key) {
         return redisTemplate.delete(generateKey(key));
     }
 
