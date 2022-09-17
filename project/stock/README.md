@@ -94,3 +94,10 @@ lettuce는 setnx를 사용하여 락을 획득한다. setnx는 spin lock을 사�
 docker image
 - docker pull redis
 - docker run —name redis-lock -d -p 6379:6379 redis
+
+1. lettuce  
+mysql의 namedlock과 비슷하다. 다른 점은 세션관리에 신경을 안써도되고 redis를 사용한다는 점이다.  
+구현이 간단하다는 장점이 있으나 spin lock 방식이므로 redis에 부하를 줄 수 있다. 그래서 락 획득 재시도에 텀을 주는 것이 좋다.
+
+2. redisson
+
